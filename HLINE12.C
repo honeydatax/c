@@ -14,13 +14,15 @@ void debugs(int n,int color);
 int main(void){
 int n;
 long l;
+int nn;
 
 screen(0x12,4);
-//n=480/2;
-for (n=0;n<479;n=n+12){
-
- hline(0,n,639,n,1);
- }
+//nn=480/2;
+n=8;
+for (n=0;n<479;n=n+8){
+nn=n ;
+ hline(320-n,nn,320+n,nn,1);
+}
  n=getch();
  return 0;
 }
@@ -158,12 +160,15 @@ bits=0;
 setbrush(0);
 //set color to all 4 mask bits to delete all negative colors
 setcolor(15);
+if (xxc>79)xxc=79;
 
 ll=xxc+1;
+
+
 // delete all the old colors of complite byte
 for (n=0;n<2;n++){
 for (l=0;l<ll;l++){
-*(s+(yy+l))=bits;
+*(s+(yy+l+xxa))=bits;
 }
 
 //fill now the entire byte 2 part n for
