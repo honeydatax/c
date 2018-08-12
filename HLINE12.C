@@ -19,7 +19,7 @@ int nn;
 screen(0x12,4);
 //nn=480/2;
 n=8;
-for (n=0;n<479;n=n+8){
+for (n=0;n<479;n++){
 nn=n ;
  hline(320-n,nn,320+n,nn,1);
 }
