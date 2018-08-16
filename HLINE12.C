@@ -68,8 +68,7 @@ int86(0x10, &regs, &regs);
 void setbrush(int brush){
 int n;
 n=0x0100*brush+3;
-outpw (0x03c4,n);
-
+outpw (0x03ce,n);
 }
 
 void hline(int x,int y,int x1,int y1,int color){
@@ -88,10 +87,10 @@ long ll;
 char far *s;
 char bits;
 // bits scroller left rigth bits of end and start of the horizontal line
-char lshiftr[]={128,192,224,240,248,252,254,255};
+unsigned char lshiftr[]={128,192,224,240,248,252,254,255};
 // bits scroller left rigth bits of end and start of the horizontal line
-char rshiftr[]={1,3,7,15,31,63,127,255};
-
+unsigned char rshiftr[]={1,3,7,15,31,63,127,255};
+char u[]={1,2,4,8,16,32,64};
 //pointer to far address position of video a000h
 s=(char far *) 0xa0000000;
 
@@ -160,6 +159,7 @@ bits=0;
 setbrush(0);
 //set color to all 4 mask bits to delete all negative colors
 setcolor(15);
+
 if (xxc>79)xxc=79;
 
 ll=xxc+1;
@@ -175,6 +175,7 @@ for (l=0;l<ll;l++){
 setcolor(color);
 bits=255;
 }
+
 }
 
 
@@ -184,36 +185,39 @@ xxc=x-axx;
 //and byte brushs
 setbrush(8);
 //delete the old color start of a broken byte line
-setcolor(15);
+for (n=0;n<4;n++){
+setcolor(u[n]);
 //delete old color byte
-*(s+(yy+xx))=lshiftr[xxc];
+
+*(s+(yy+xx))=(char)lshiftr[xxc];
+}
 //or byte brushs
 setbrush(16);
 //set the color
 setcolor(color);
 //write the firt byte of the broken line
-*(s+(yy+xx))=rshiftr[xxc];
+*(s+(yy+xx))=(char)rshiftr[xxc];
 
 }
 
 //check if  is the tail  of broken line tail byte
-//debugs(bxx,0x40f);
-//debugs(x1+1,0x40f);
 
 if (bxx != x1+1){
-xxc=8-x1-bxx;
+xxc=(x1-bxx);
 //and byte brushs
 setbrush(8);
 //delete the old color tail of a broken byte line
-setcolor(15);
+for (n=0;n<4;n++){
+setcolor(u[n]);
 //delete old color byte
-*(s+(yy+xxx))=rshiftr[xxc];
+*(s+(yy+xxx))=(char)~lshiftr[xxc];
+}
 //or byte brushs
 setbrush(16);
 //set the color
 setcolor(color);
 //write the last  byte of the broken line
-*(s+(yy+xxx))=lshiftr[xxc];
+*(s+(yy+xxx))=(char)~rshiftr[xxc];
 
 }
 
